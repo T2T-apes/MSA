@@ -46,3 +46,9 @@ for file in CHUNKS/*.*.ss ; do
     sbatch -pvgl -c4 --output=log/elements_scores/slurm-%j.out --wrap="time /rugpfs/fs0/vgl/store/gformenti/bin/PHAST/phast/bin/phastCons --most-conserved ELEMENTS/$root.bed --score $file ave.cons.mod,ave.noncons.mod > SCORES/$root.wig"
 done
 ```
+
+## combine results
+```
+cat ELEMENTS/chm13#1#chr19.* > ELEMENTS/concat.bed
+sort -k1,1 -k2,2n ELEMENTS/concat.bed > ELEMENTS/concat_sorted.bed
+```
