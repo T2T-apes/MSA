@@ -7,6 +7,16 @@ wgatools trimovp chm13.notrans.paf > chm13.notrans.noovp.paf
 wgatools pp chm13.notrans.noovp.paf -o parallel_outdir -r -f primates16.20231205.fa.gz -t8
 ```
 
+## compute MAF coverage
+```
+sbatch -pvgl -c1 --wrap="/rugpfs/fs0/vgl/store/gformenti/bin/maf_stream/target/release/maf_stream coverage chm13\#1\#chr19 MAF_10Mb/chm13#1#chr19.maf chm13#1#chr19#10Mb.cov"
+```
+
+## extract interesting alignments
+```
+grep -f <(awk '{print $1}' lookup.csv) chm13#1#chr19.maf >> chm13#1#chr19#filtered.maf
+```
+
 ## chop alignment
 Note: need to change the names to match the tree
 ```
