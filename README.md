@@ -51,4 +51,6 @@ done
 ```
 cat ELEMENTS/chm13#1#chr19.* > ELEMENTS/concat.bed
 sort -k1,1 -k2,2n ELEMENTS/concat.bed > ELEMENTS/concat_sorted.bed
+cd SCORES
+cat <(ls -1 chm13#1#chr19.* | awk -F'[.-]' '{print $2"\t"$3"\t"$0}' | sort -nk1 | cut -f3) > concat.wig
 ```
