@@ -2,9 +2,8 @@
 
 ## PAF to MAF
 ```
-wgatools filter -f paf -a 10000000 chm13.paf -o chm13.filter_10Mb.paf -r -t32
-wgatools trimovp chm13.notrans.paf > chm13.notrans.noovp.paf
-wgatools pp chm13.notrans.noovp.paf -o parallel_outdir -r -f primates16.20231205.fa.gz -t8
+wgatools filter -f paf -a 10000000 primates16.20231205_wfmash-v0.12.5/chm13#1.aln.paf -o chm13.filter_10Mb.paf -r -t32
+wgatools pp chm13.filter_10Mb.paf -o MAF_10Mb_new -r -f primates16.20231205.fa.gz -t32
 ```
 
 ## compute MAF coverage
