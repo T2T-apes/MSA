@@ -14,7 +14,7 @@ sbatch -pvgl -c1 --wrap="/rugpfs/fs0/vgl/store/gformenti/bin/maf_stream/target/r
 ## extract interesting alignments
 ```
 head -1 chm13#1#chr19.maf > chm13#1#chr19#filtered.maf
-grep -f <(awk '{print $1}' lookup.csv) chm13#1#chr19.maf >> chm13#1#chr19#filtered.maf
+grep -f <(awk -F',' '{print $1}' lookup.csv) chm13#1#chr19.maf >> chm13#1#chr19#filtered.maf
 ```
 
 ## match tree names and maf names
@@ -68,5 +68,7 @@ cat ELEMENTS/chm13#1#chr19.* > ELEMENTS/concat.bed
 sort -k1,1 -k2,2n ELEMENTS/concat.bed > ELEMENTS/concat_sorted.bed
 cd SCORES
 cat <(ls -1 chm13#1#chr19.* | awk -F'[.-]' '{print $2"\t"$3"\t"$0}' | sort -nk1 | cut -f3) > concat.wig
+sed -i 's/#filtered#edited//g' concat.wig
+sed -i 's/#filtered#edited//g' concat_sorted.bed
 wigToBigWig concat.wig chrom.sizes concat.bigWig
 ```
