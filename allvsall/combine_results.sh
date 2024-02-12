@@ -4,6 +4,7 @@ set -e -o pipefail
 maf_name=$1
 
 ## combine results
+echo "Working on file: ${maf_name}"
 cat ELEMENTS/${maf_name}/* > ELEMENTS/${maf_name}.bed
 sort -k1,1 -k2,2n ELEMENTS/${maf_name}.bed > ELEMENTS/${maf_name}.sorted.bed
 cat $(ls -1 SCORES/${maf_name}/* | awk -F'[.-]' '{print $2"\t"$3"\t"$0}' | sort -nk1 | cut -f3) > SCORES/${maf_name}.wig

@@ -2,6 +2,7 @@
 set -e -o pipefail
 
 paf_name=$1
+mkdir -p LOG/$1
 
 maf_file=$(sed -n "${SLURM_ARRAY_TASK_ID}p" MAF/${paf_name}/file.ls)
 
@@ -29,6 +30,7 @@ fi
 
 ## chop alignments
 if [ ! -d CHUNKS/${maf_name} ]; then
+    echo "Chopping alignment: ${maf_name}"
     gfastats FASTA/${paf_name}.fa $maf_name -o FASTA/${maf_name}.fa
     mkdir -p CHUNKS/${maf_name}
     /rugpfs/fs0/vgl/store/gformenti/bin/PHAST/phast/bin/msa_split MAF_FILTERED/${paf_name}/${maf_name}.filtered.edited.maf --in-format MAF --refseq FASTA/${maf_name}.fa --windows 1000000,0 --out-root CHUNKS/${maf_name}/${maf_name} --out-format SS --min-informative 1000 --between-blocks 5000
@@ -36,11 +38,11 @@ fi
 
 ## generate scores
 mkdir -p ELEMENTS/${maf_name} SCORES/${maf_name}
-rm -f ELEMENTS/${maf_name}/* SCORES/${maf_name}/*
 
 ls CHUNKS/${maf_name}/${maf_name}*.*.ss > CHUNKS/${maf_name}/file.ls
 NFILES=$(cat CHUNKS/${maf_name}/file.ls | wc -l)	
+echo "Processing alignment: ${maf_name}"
 
-sbatch  --nice=10000 --array=1-${NFILES} -c1 -pvgl --output=LOG/process_chunk-%j.out process_chunk.sh ${maf_name} | awk '{print $4}' > CHUNKS/${maf_name}/jid
+sbatch  --nice=10000 --array=1-${NFILES}%16 -c1 -pvgl --output=LOG/${1}/process_chunk-%A_%a.out process_chunk.sh ${maf_name} | awk '{print $4}' > CHUNKS/${maf_name}/jid
 
-sbatch  --nice=10000 --dependency=afterok:`cat CHUNKS/${maf_name}/jid` -pvgl -c1 --output=LOG/combine_results-%j.out combine_results.sh ${maf_name}
+sbatch  --nice=10000 --dependency=afterok:`cat CHUNKS/${maf_name}/jid` -pvgl -c1 --output=LOG/${1}/combine_results-%j.out combine_results.sh ${maf_name}

@@ -3,6 +3,7 @@ set -e -o pipefail
 
 paf_file=$1
 REFERENCE_GENOMES=$2
+mkdir -p LOG/$1
 
 declare -A genomes=(\
 [Gorilla_gorilla]="na" \
@@ -36,13 +37,15 @@ fi
 
 ## extract fasta reference
 if [ ! -f FASTA/${paf_name}.fa ]; then
+    echo "extracting: ${paf_name}"
     grep ${paf_name} ${REFERENCE_GENOMES}.fai | cut -f1 > FASTA/${paf_name}.ls
     gfastats -i FASTA/${paf_name}.ls ${REFERENCE_GENOMES} -o FASTA/${paf_name}.fa
 fi
 
 mkdir -p MAF_FILTERED/${paf_name}/
 
-ls MAF/${paf_name}/*.maf > MAF/${paf_name}/file.ls
+grep -vf <(ls SCORES/${paf_name}*bigWig | sed -e 's/SCORES\/\|\.bigWig//g') <(ls MAF/${paf_name}/*.maf) > MAF/${paf_name}/file.ls
+
 NFILES=$(cat MAF/${paf_name}/file.ls | wc -l)
 
-sbatch --nice=10000 --array=1-${NFILES} -c1 -pvgl --output=LOG/slurm-%j.out process_maf.sh ${paf_name}
+sbatch --nice=10000 --array=1-${NFILES}%16 -c1 -pvgl --output=LOG/${paf_name}/process_maf-%A_%a.out process_maf.sh ${paf_name}
