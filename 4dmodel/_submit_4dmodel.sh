@@ -3,7 +3,7 @@
 rm -rf matrix3D.txt combinations.txt LOGS ELEMENTS SCORES
 mkdir -p ELEMENTS SCORES LOGS
 
-lens=($(seq 100000 50 105000))
+lens=($(seq 0 50 30000))
 tcs=($(seq 0 0.05 1))
 
 for len in "${lens[@]}" 
