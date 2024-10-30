@@ -14,13 +14,24 @@ Alignments were generated using <a href="https://github.com/waveygang/wfmash">wf
 Next, <a href="github.com/wjwei-handsome/wgatools">wgatools</a> was used to filter PAF (16 PAFs) for min alignment len >10 Mbp and then convert PAF>MAF (384 MAFs).
 
 <h3>Conservation scores and conserved elements (CEs)</h3>
-Tracks have been produced according to <a href="http://compgen.cshl.edu/phast/phastCons-HOWTO.html">PhastCons HOWTO</a> similarly to similarly to as in <a href="https://github.com/SwallowGenomics/BarnSwallow/tree/main/Analyses/Selection%20analysis">Secomandi et al. 2023</a> using both default parameters (unsupervised EM learning) and a 4-fold degenerate site model.
-The 4d model was further refined by fine tuning of the model parameters --target-coverage and --expected-length maximizing enrichment (Jaccard/IoU) in CHM13 exon sequences. Code is available in the associated <a href="https://github.com/T2T-apes/MSA">Github</a>.
+Tracks have been produced according to <a href="http://compgen.cshl.edu/phast/phastCons-HOWTO.html">PhastCons HOWTO</a> and following two different approaches, similarly as described in <a href="https://github.com/SwallowGenomics/BarnSwallow/tree/main/Analyses/Selection%20analysis">Secomandi et al. 2023</a>
+
+<ul>
+    <li><strong>Approach 1:</strong> In the first approach, we used default parameters (unsupervised EM learning), splitting alignments into 1 Mbp chunks and combining predictions.</li>
+    <li><strong>Approach 2:</strong> For the second approach, we applied a 4-fold degenerate site model, using entire alignments for all chromosomes except for chromosome 2, which was split into 1 Mbp chunks. The 4d model was further refined by fine tuning of the model parameters <code>--target-coverage</code> and <code>--expected-length</code> maximizing enrichment (Jaccard/IoU) in CHM13 regions. There are three versions for this approach:
+        <ul>
+            <li>v0.1: We maximized enrichent in CHM13 exon sequences, by training a model for each chromosome.</li>
+            <li>v0.2: We maximized enrichent in CHM13 coding sequences (CDS), by training a single model across all chromosomes together.</li>
+            <li>v0.3: We maximized enrichent in CHM13 coding sequences (CDS), by training a model for each chromosome.</li>
+        </ul>
+    </li>
+</ul>
+Code is available in the associated <a href="https://github.com/T2T-apes/MSA">Github</a>.
 The initial model estimated with ML and a tree from <a href="https://timetree.org">TimeTree</a>.
 For each chromosome, alignments were split in 1 Mbp chunks, and predictions were combined.
 
 <h3>Notes</h3>
-Additional data is available at s3://garrisonlab/t2t-primates/PHAST/all-vs-all/
+Additional data is available at <code>s3://garrisonlab/t2t-primates/PHAST/all-vs-all/</code>
 </ul>
 
 <h2>Credits</h2>
